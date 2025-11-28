@@ -48,4 +48,9 @@ public class JsonPlaceHolderClient implements PostApiClient {
             return Optional.empty();
         }
     }
+
+    @Override
+    public Optional<Post> createPost(Post postToCreate) {
+        return Optional.empty();
+    }
 }

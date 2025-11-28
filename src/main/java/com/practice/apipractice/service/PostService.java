@@ -1,11 +1,9 @@
-package com.practice.apipractice.client;
+package com.practice.apipractice.service;
 
 import com.practice.apipractice.model.Post;
 
 import java.util.Optional;
 
-public interface PostApiClient {
-    Optional<Post> getPostById(int id);
-
+public interface PostService {
     Optional<Post> createPost(Post postToCreate);
 }
