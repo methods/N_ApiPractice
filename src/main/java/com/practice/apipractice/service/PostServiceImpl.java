@@ -15,6 +15,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Optional<Post> createPost(Post postToCreate) {
+        String title = postToCreate.title();
+
+        if ( title == null || title.isBlank()) {
+            return Optional.empty();
+        }
         return postApiClient.createPost(postToCreate);
     };
 }
