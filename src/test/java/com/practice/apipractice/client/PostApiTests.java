@@ -47,4 +47,24 @@ public class PostApiTests {
         // THEN the API should return 404 which the client should return as an empty Optional
         assertThat(result).isEmpty();
     }
+
+    @Test
+    void createPost_withValidPost_Returns201AndPost() {
+        // GIVEN a valid post to create
+        Post postToCreate = new Post(1, null, "Test Title", "Test Body");
+
+        // WHEN the client is called with the post as request body
+        Optional<Post> result = postApiClient.createPost(postToCreate);
+
+        // THEN the post creation should succeed
+        assertThat(result).isPresent();
+
+        // AND the Post object fields should be appropriate
+        Post postResponse = result.get();
+        assertThat(postResponse.id()).isNotNull();
+        assertThat(postResponse.id()).isPositive();
+        assertThat(postResponse.userId()).isEqualTo(postToCreate.userId());
+        assertThat(postResponse.title()).isEqualTo(postToCreate.title());
+        assertThat(postResponse.body()).isEqualTo(postToCreate.body());
+    }
 }
