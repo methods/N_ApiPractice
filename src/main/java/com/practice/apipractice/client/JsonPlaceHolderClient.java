@@ -1,5 +1,6 @@
 package com.practice.apipractice.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.apipractice.model.Post;
 
@@ -24,7 +25,6 @@ public class JsonPlaceHolderClient implements PostApiClient {
 
     @Override
     public Optional<Post> getPostById(int id) {
-        // TODO: Implement HTTP request and JSON parsing
         URI uri = URI.create(BASE_URL + "/posts/" + id);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
@@ -44,6 +44,32 @@ public class JsonPlaceHolderClient implements PostApiClient {
             }
         } catch (IOException | InterruptedException e ) {
             System.err.println("Error fetching post by ID: " + e.getMessage());
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Post> createPost(Post postToCreate) {
+        try {
+            String jsonPost = objectMapper.writeValueAsString(postToCreate);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "/posts/"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonPost))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 201) {
+                Post post = objectMapper.readValue(response.body(), Post.class);
+                return Optional.of(post);
+            } else {
+                System.err.println("Request failed with status code: " + response.statusCode() + " and body: " + response.body());
+                return Optional.empty();
+            }
+        } catch (IOException | InterruptedException e ) {
+            System.err.println("Error creating Post: " + e.getMessage());
             e.printStackTrace();
             return Optional.empty();
         }
